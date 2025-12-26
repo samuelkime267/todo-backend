@@ -47,7 +47,7 @@ export const isAuthenticated = async (
     next();
   } catch (error) {
     if (error instanceof TokenExpiredError) {
-      const error = new Error("Invalid or expired token") as CustomError;
+      const error = new Error("User not authenticated") as CustomError;
       error.statusCode = 401;
       return next(error);
     }

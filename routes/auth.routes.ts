@@ -17,6 +17,6 @@ authRouter.post("/login", loginValidator, login);
 
 authRouter.post("/logout", isAuthenticated, isValidRefreshToken, logout);
 
-authRouter.post("/refresh-token", isValidRefreshToken, refreshToken);
+authRouter.get("/refresh-token", isValidRefreshToken, refreshToken);
 
 export default authRouter;

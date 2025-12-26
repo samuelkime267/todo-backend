@@ -28,9 +28,7 @@ export const createTodo = async (
     res.status(201).json({
       message: "Todo created successfully",
       success: true,
-      data: {
-        todo: todos[0],
-      },
+      todo: todos[0],
     });
   } catch (error) {
     next(error);
@@ -57,9 +55,7 @@ export const updateTodo = async (
     res.status(200).json({
       message: "Todo updated successfully",
       success: true,
-      data: {
-        todo: savedTodo,
-      },
+      todo: savedTodo,
     });
   } catch (error) {
     next(error);
@@ -97,9 +93,7 @@ export const getTodos = async (
     res.status(200).json({
       message: "Todos fetched successfully",
       success: true,
-      data: {
-        todos,
-      },
+      todos,
     });
   } catch (error) {
     next(error);
@@ -117,9 +111,7 @@ export const getTodo = async (
     res.status(200).json({
       message: "Todo fetched successfully",
       success: true,
-      data: {
-        todo,
-      },
+      todo,
     });
   } catch (error) {
     next(error);

@@ -6,6 +6,7 @@ import { LoginBodyType, SignUpBodyType } from "../schemas/auth";
 import { CustomError } from "../@types";
 import { generateToken } from "../utils";
 import Token from "../models/token.model";
+import { UserDocument } from "../@types/express";
 
 export const signup = async (
   req: Request,
@@ -49,14 +50,21 @@ export const signup = async (
     await session.commitTransaction();
     session.endSession();
 
-    res.status(201).json({
-      message: "User created successfully",
-      success: true,
-      data: {
+    res
+      .cookie("refreshToken", token.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: "/api/v1/auth",
+      })
+      .status(201)
+      .json({
+        message: "User created successfully",
+        success: true,
         user,
         token,
-      },
-    });
+      });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -96,14 +104,21 @@ export const login = async (
       email: user.email,
     };
 
-    res.status(200).json({
-      message: "User logged in successfully",
-      success: true,
-      data: {
+    res
+      .cookie("refreshToken", token.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        path: "/api/v1/auth",
+      })
+      .status(200)
+      .json({
+        message: "User logged in successfully",
+        success: true,
         user: userData,
         token,
-      },
-    });
+      });
   } catch (error) {
     next(error);
   }
@@ -141,9 +156,13 @@ export const logout = async (
       },
     ]);
 
-    res.clearCookie("refreshToken");
-
     res
+      .clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/api/v1/auth",
+      })
       .status(200)
       .json({ message: "User created successfully", success: true });
   } catch (error) {
@@ -152,16 +171,12 @@ export const logout = async (
 };
 
 export const refreshToken = (req: Request, res: Response) => {
-  const { user } = req;
+  const user = req.user as UserDocument;
   const token = generateToken(user._id.toString(), true);
 
   res.status(200).json({
     message: "Generated Access Token Successfully",
     success: true,
-    data: {
-      token,
-    },
+    token,
   });
-
-  res.status(200).json({ message: "User logged out successfully" });
 };

@@ -14,8 +14,8 @@ export const isValidRefreshToken = async (
     const { refreshToken } = req.cookies;
 
     if (!refreshToken) {
-      const error = new Error("Refresh token is required") as CustomError;
-      error.statusCode = 400;
+      const error = new Error("User not authenticated") as CustomError;
+      error.statusCode = 401;
       throw error;
     }
 
